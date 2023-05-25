@@ -1,0 +1,178 @@
+<div class="d-flex w-100 justify-content-between align-items-baseline m-b-10">
+  <a class="page-heading font-weight-normal" [routerLink]="['../../']">Back to  Breakouts</a>
+</div>
+
+
+<!--  <nz-spin nzSimple [nzSize]="'large'" class="m-t-35 m-l-35" *ngIf="!breakouts.length"></nz-spin>-->
+
+<div nz-row class="m-t-10">
+  <div nz-col nzSm="24" nzMd="24" nzLg="20">
+    <div class="w-100">
+      <nz-card [nzBordered]="true" class="shadow pointer">
+        <div class="container">
+          <div nz-row [nzGutter]="100">
+            <div nz-col  nzSm="8" nzMd="5" nzLg="5">
+              <nz-avatar [nzSize]="90" nzIcon="user" [nzSrc]="api.imgFix(breakout.path.icon)"></nz-avatar>
+            </div>
+            <div nz-col  nzSm="11" nzMd="10" nzLg="12" class="">
+              <div class="d-flex flex-column justify-content-center">
+                <div class="d-flex flex-xs-column flex-sm-column flex-md-row justify-content-between align-items-start">
+                  <div>
+                    <h3 class="m-0 text-primary">{{breakout.title}}</h3>
+                    <a [routerLink]="['../../../', 'paths', 'view', breakout.path.id]" class="linkHover">
+                      <p class="m-0">{{breakout.path.title}}</p>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div nz-col nzSm="5" nzMd="9" nzLg="7" class="">
+              <div class="d-flex flex-column align-items-end justify-content-center h-100">
+                <p class="font-weight-semibold">{{breakout.startDate | date: 'MMM d h:mm a'}}</p>
+                <a class="m-0 linkHover" [routerLink]="['../../../', 'users', breakout.host.id, 'portfolio']">
+                  <img style="height: 20px; width: 20px;" [src]="api.imgFix(breakout.host.photo)" alt="">
+                  {{breakout.host.firstName+' '+breakout.host.lastName}}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+  </div>
+</div>
+
+<div nz-row class="m-t-10">
+  <div nz-col  nzSm="24" nzMd="24" nzLg="20">
+    <nz-card [nzBordered]="true" class="shadow pointer">
+      <div class="d-flex" *ngIf="!selectView">
+        <div class="d-flex flex-column" style="flex: 2">
+          <h4 class="linkHover" (click)="selectView=true">
+            <i nz-icon [nzType]="myStatusIcon" nzTheme="outline" class="m-r-5"></i>
+            I'm {{myStatusText}}
+          </h4>
+          <p (click)="showPathModal('going')" class="m-t-10 m-b-0"><spa>{{goingCount}}</spa><span class="m-l-10">Going</span></p>
+          <p (click)="showPathModal('notGoing')" class="m-0"><span>{{cantCount}}</span><span class="m-l-10">Not Going</span></p>
+          <p (click)="showPathModal('invited')" class="m-0"><span>{{invitedCount}}</span><span class="m-l-10">Invited</span></p>
+        </div>
+        <div class="d-flex flex-column" style="flex: 3">
+          <p class="m-0"><i nz-icon nzType="global" nzTheme="outline" class="m-r-10"></i>{{breakout.address}}</p>
+          <p class="m-0"><i nz-icon nzType="calendar" nzTheme="outline" class="m-r-10"></i>{{breakout.startDate | date: 'MMM d h:mm a'}}</p>
+          <p class="m-0"><i nz-icon nzType="file-text" nzTheme="outline" class="m-r-10"></i>{{breakout.description}}</p>
+        </div>
+      </div>
+      <div *ngIf="selectView">
+        <h4 class="m-b-10">Set my status as:</h4>
+        <p class="m-0" (click)="changeMyStatus(4, breakout)">Going</p>
+        <p class="m-0" (click)="changeMyStatus(3, breakout)">Maybe</p>
+        <p class="m-0" (click)="changeMyStatus(2, breakout)">Not Going</p>
+      </div>
+    </nz-card>
+  </div>
+</div>
+
+  <nz-modal [(nzVisible)]="pathIsVisible"
+            (nzOnCancel)="handleCancel()"
+            (nzOnOk)="handleOk()"
+            [nzContent]="pathModalContent">
+    <div *nzModalFooter>
+      <button nz-button nzType="primary" (click)="handleOk()" class="app-brown-btn">Done</button>
+    </div>
+  </nz-modal>
+  <ng-template  #pathModalContent>
+    <ng-container *ngIf="modalContent == 'invited'">
+      <div class="d-flex flex-column" *ngIf="invited.length">
+        <div class="d-flex" *ngFor="let user of invited">
+          <img [src]="api.imgFix(user.photo)" style="height: 50px; width: 50px" class="m-b-20 m-r-20">
+          <a class="m-0 linkHover font-size-17" [routerLink]="['../../../', 'users', user.id, 'portfolio']">{{user.firstName+' '+user.lastName}}</a>
+        </div>
+      </div>
+      <p *ngIf="!invited.length">Nobody to show</p>
+    </ng-container>
+    <ng-container *ngIf="modalContent == 'notGoing'">
+      <div class="d-flex flex-column" *ngIf="notGoing.length">
+        <div class="d-flex" *ngFor="let user of notGoing">
+          <img [src]="api.imgFix(user.photo)" style="height: 50px; width: 50px" class="m-b-20 m-r-20">
+          <a class="m-0 linkHover font-size-17" [routerLink]="['../../../', 'users', user.id, 'portfolio']">{{user.firstName+' '+user.lastName}}</a>
+        </div>
+      </div>
+      <p *ngIf="!notGoing.length">Nobody to show</p>
+    </ng-container>
+    <ng-container *ngIf="modalContent == 'going'">
+      <div class="d-flex flex-column" *ngIf="goingUsers.length">
+        <div class="d-flex" *ngFor="let user of goingUsers">
+          <img [src]="api.imgFix(user.photo)" style="height: 50px; width: 50px" class="m-b-20 m-r-20">
+          <a class="m-0 linkHover font-size-17" [routerLink]="['../../../', 'users', user.id, 'portfolio']">{{user.firstName+' '+user.lastName}}</a>
+        </div>
+      </div>
+      <p *ngIf="!goingUsers.length">Nobody to show</p>
+    </ng-container>
+  </ng-template>
+
+
+<h3 class="text-muted">Post a message</h3>
+<form class="w-75 m-t-5 m-b-20" [formGroup]="addReplyForm" (ngSubmit)="submitReply()">
+  <div nz-row class="h-100 justify-content-around bg-white">
+    <div class="h-100 p-l-10 bg-white p-2" nz-col nzSm="24" nzMd="16">
+          <textarea nz-input placeholder="Write a comment"
+                    class="shadow commentTextBox shadow transition" style="height: 120px"
+                    formControlName="comment"></textarea>
+    </div>
+    <input type="file" class="file-input" (change)="handleUploadReply($event, 'image')" formControlName="img" #imgUpload>
+    <input type="file" class="file-input" (change)="handleUploadReply($event, 'video')" formControlName="video" #videoUpload>
+    <input type="file" class="file-input" (change)="handleUploadReply($event, 'audio')" formControlName="audio" #audioUpload>
+    <input type="file" class="file-input" (change)="handleUploadReply($event, 'document')" formControlName="document" #docUpload>
+
+    <div class="align-items-center ant-col ant-col-md-8 ant-col-sm-24 d-flex flex-column justify-content-around p-2"
+         nz-col  nzSm="24" nzMd="8">
+      <div class="d-flex justify-content-center align-items-center p-2 uploadOptions">
+        <div class="d-flex flex-column">
+          <button nz-button type="button" (click)="imgUpload.click()"
+                  class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+            <i nz-icon nzType="picture" nzTheme="outline"></i>
+            <span>Picture</span>
+          </button>
+        </div>
+        <div class="d-flex flex-column m-l-5">
+          <button nz-button type="button" (click)="videoUpload.click()"
+                  class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+            <i nz-icon nzType="file-pdf" nzTheme="outline"></i>
+            <span>File</span>
+          </button>
+        </div>
+        <div class="d-flex flex-column m-l-5">
+          <button nz-button type="button" (click)="audioUpload.click()"
+                  class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+            <i nz-icon nzType="audio" nzTheme="outline"></i>
+            <span>Audio</span>
+          </button>
+        </div>
+        <div class="d-flex flex-column m-l-5">
+          <button nz-button type="button" (click)="docUpload.click()"
+                  class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+            <i nz-icon nzType="video-camera" nzTheme="outline"></i>
+            <span>Video</span>
+          </button>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center align-items-center">
+        <button nz-button nzType="primary" class="ant-btn ant-btn-primary app-brown-btn">Submit</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+<div class="w-100 m-b-20" *ngFor="let comment of comments">
+  <div class="d-flex">
+    <img [src]="api.imgFix(comment.user.photo)" height="40px" width="40px" class="border-radius-10">
+    <div class="d-flex flex-column m-l-15">
+      <div class="d-flex align-items-center">
+        <a [routerLink]="['dashboard', 'users', comment.user.id, 'portfolio']" class="font-weight-semibold font-size-15 linkHover">{{comment.user.firstName+' '+comment.user.lastName}}</a>
+        <p class="m-0 text-muted font-size-12 m-l-10">{{ api.reFormatDate(comment.created) }}</p>
+      </div>
+      <p class="text-muted m-0 font-size-12">{{ comment.message }}</p>
+    </div>
+  </div>
+  <img *ngIf="comment.attachmentType=='image'" style="height: 110px"
+       [src]="api.imgFix(comment.attachment)" class="m-t-10 p-l-30">
+</div>

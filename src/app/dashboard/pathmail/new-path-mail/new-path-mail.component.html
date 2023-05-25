@@ -1,0 +1,184 @@
+<h5 nz-typography class="text-muted font-weight-semibold">Send To:</h5>
+<nz-tabset>
+  <nz-tab [nzTitle]="titleTemplate" (nzClick)="individualPage = true">
+    <ng-template #titleTemplate> <i nz-icon nzType="user"></i><span>Individual</span></ng-template>
+
+    <div nz-row>
+      <div nz-col nzSpan="12">
+        <nz-input-group [nzPrefix]="prefixTemplateSearch">
+          <input type="text" nz-input placeholder="Search username" [(ngModel)]="searchIndividual" />
+        </nz-input-group>
+        <ng-template #prefixTemplateSearch><i nz-icon nzType="search"></i></ng-template>
+      </div>
+      <div nz-col nzSpan="12" class="p-l-20">
+        <h5 nz-typography class="text-muted">Recipients: </h5>
+        <ng-container >
+          <nz-tag [nzColor]="'#967a4d'" *ngFor="let user of selectedUsers">{{ user }}</nz-tag>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="m-t-30">
+    </div>
+    <h5 nz-typography class="text-muted">Path Mates</h5>
+
+    <form nz-form [formGroup]="createThreadForm" (ngSubmit)="submitCreateThread()">
+      <nz-form-item>
+        <nz-form-control>
+          <div class="form-group">
+            <div *ngFor="let web of usersList">
+              <label class="font-size-20">
+                <input type="checkbox" [value]="web.id" (change)="onCheckboxChange($event)" formArrayName="userIDs" [checked]="this.userID==web.id"/>
+                {{web.firstName+' '+web.lastName}}
+              </label>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+
+      <div *ngIf="individualPage"  nz-row class="m-t-100 customDrawer transition">
+        <div class="disableBox" *ngIf="selectedUsers.length==0">Please select a recipient to send a message</div>
+        <div class="w-100 h-100 transition h-100">
+          <div nz-row class="h-100 justify-content-around bg-white">
+            <div class="h-100 p-l-10 bg-white p-2" nz-col nzSm="24" nzMd="16">
+          <textarea nz-input placeholder="Write a comment"
+                    class="shadow commentTextBox shadow transition"
+                    formControlName="comment" ></textarea>
+            </div>
+
+            <input type="file" class="file-input" (change)="handleUpload($event, 'image')" #imgUpload>
+            <input type="file" class="file-input" (change)="handleUpload($event, 'video')" #videoUpload>
+            <input type="file" class="file-input" (change)="handleUpload($event, 'audio')" #audioUpload>
+            <input type="file" class="file-input" (change)="handleUpload($event, 'document')" #docUpload>
+
+            <div class="align-items-left ant-col ant-col-md-8 ant-col-sm-24 d-flex flex-column justify-content-around p-2" nz-col  nzSm="24" nzMd="8">
+              <div class="d-flex justify-content-center align-items-center p-2 uploadOptions">
+                <div class="d-flex flex-column">
+                  <button nz-button type="button" (click)="imgUpload.click()"
+                          class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                    <i nz-icon nzType="picture" nzTheme="outline"></i>
+                    <span>Picture</span>
+                  </button>
+                </div>
+                <div class="d-flex flex-column m-l-5">
+                  <button nz-button type="button" (click)="videoUpload.click()"
+                          class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                    <i nz-icon nzType="file-pdf" nzTheme="outline"></i>
+                    <span>File</span>
+                  </button>
+                </div>
+                <div class="d-flex flex-column m-l-5">
+                  <button nz-button type="button" (click)="audioUpload.click()"
+                          class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                    <i nz-icon nzType="audio" nzTheme="outline"></i>
+                    <span>Audio</span>
+                  </button>
+                </div>
+                <div class="d-flex flex-column m-l-5">
+                  <button nz-button type="button" (click)="docUpload.click()"
+                          class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                    <i nz-icon nzType="video-camera" nzTheme="outline"></i>
+                    <span>Video</span>
+                  </button>
+                </div>
+              </div>
+              <div class="d-flex justify-content-center align-items-left">
+                <button nz-button nzType="primary" class="ant-btn ant-btn-primary app-brown-btn w-100">Submit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+
+  </nz-tab>
+
+  <nz-tab [nzTitle]="titleTemplate2" (nzClick)="individualPage = false">
+    <ng-template #titleTemplate2> <i nz-icon nzType="usergroup-add"></i><span>Entire Path</span></ng-template>
+      <div nz-row>
+        <div nz-col nzSpan="12">
+          <nz-input-group [nzPrefix]="prefixTemplateSearch">
+            <input type="text" nz-input placeholder="Search username" [(ngModel)]="searchIndividual" />
+          </nz-input-group>
+          <ng-template #prefixTemplateSearch><i nz-icon nzType="search"></i></ng-template>
+        </div>
+        <div nz-col nzSpan="12" class="p-l-20">
+          <h5 nz-typography class="text-muted">Recipients: </h5>
+          <ng-container >
+            <nz-tag [nzColor]="'#967a4d'">{{ selectedEntirePath }}</nz-tag>
+          </ng-container>
+        </div>
+      </div>
+
+
+      <div class="m-t-30">
+      </div>
+      <h5 nz-typography class="text-muted">Path</h5>
+
+    <form [formGroup]="createPathMailForm" (ngSubmit)="submitCreatePathMail()">
+      <div class="form-check" *ngFor="let control of pathsList">
+        <label class="form-check-label font-size-20">
+          <input formControlName="check1" type="radio" class="form-check-input m-r-5" (change)="entirePathInputChange(control.id)" value="{{ control.title }}"> {{ control.title }}
+        </label>
+      </div>
+
+
+      <div  nz-row class="m-t-100 customDrawer transition">
+        <div class="disableBox" *ngIf="!selectedEntirePath">Please select a recipient to send a message</div>
+        <div class="w-100 h-100 transition h-100">
+            <div nz-row class="h-100 justify-content-around bg-white">
+              <div class="h-100 p-l-10 bg-white p-2" nz-col nzSm="24" nzMd="16">
+          <textarea nz-input placeholder="Write a comment"
+                    class="shadow commentTextBox shadow transition"
+                    formControlName="msg" ></textarea>
+              </div>
+
+              <input type="file" class="file-input" (change)="handleUpload($event, 'image')" #imgUpload>
+              <input type="file" class="file-input" (change)="handleUpload($event, 'video')" #videoUpload>
+              <input type="file" class="file-input" (change)="handleUpload($event, 'audio')" #audioUpload>
+              <input type="file" class="file-input" (change)="handleUpload($event, 'document')" #docUpload>
+
+              <div class="align-items-left ant-col ant-col-md-8 ant-col-sm-24 d-flex flex-column justify-content-around p-2" nz-col  nzSm="24" nzMd="8">
+                <div class="d-flex justify-content-center align-items-center p-2 uploadOptions">
+                  <div class="d-flex flex-column">
+                    <button nz-button type="button" (click)="imgUpload.click()"
+                            class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                      <i nz-icon nzType="picture" nzTheme="outline"></i>
+                      <span>Picture</span>
+                    </button>
+                  </div>
+                  <div class="d-flex flex-column m-l-5">
+                    <button nz-button type="button" (click)="videoUpload.click()"
+                            class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                      <i nz-icon nzType="file-pdf" nzTheme="outline"></i>
+                      <span>File</span>
+                    </button>
+                  </div>
+                  <div class="d-flex flex-column m-l-5">
+                    <button nz-button type="button" (click)="audioUpload.click()"
+                            class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                      <i nz-icon nzType="audio" nzTheme="outline"></i>
+                      <span>Audio</span>
+                    </button>
+                  </div>
+                  <div class="d-flex flex-column m-l-5">
+                    <button nz-button type="button" (click)="docUpload.click()"
+                            class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                      <i nz-icon nzType="video-camera" nzTheme="outline"></i>
+                      <span>Video</span>
+                    </button>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-center align-items-left">
+                  <button nz-button nzType="primary" class="ant-btn ant-btn-primary app-brown-btn w-100">Submit</button>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+    </form>
+
+
+  </nz-tab>
+</nz-tabset>

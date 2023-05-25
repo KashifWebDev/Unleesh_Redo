@@ -1,0 +1,169 @@
+<div class="d-flex w-100 justify-content-between align-items-baseline">
+  <p class="page-heading">Chats</p>
+  <button class="ant-btn ant-btn-dangerous app-black-button" (click)="showDrawer()">New</button>
+</div>
+
+<div nz-row class="m-b-20 m-t-15">
+  <div class="w-100" nz-col nzSm="20" nzMd="12" nzLg="10">
+    <div class="example-input">
+      <nz-input-group nzSize="large" [nzSuffix]="suffixIcon">
+        <input placeholder="Search Announcements...." nz-input [(ngModel)]="inputValue" (ngModelChange)="onChange($event)" />
+      </nz-input-group>
+      <ng-template #suffixIcon>
+        <i nz-icon nzType="search"></i>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+<ng-template #commentTemplateRef let-discussion="discussion">
+  <nz-comment  [nzAuthor]="discussion.user.firstName+' '+discussion.user.lastName"
+              [nzDatetime]="reformatDate(discussion.created)">
+    <nz-avatar nz-comment-avatar nzIcon="user" [nzSrc]="api.imgFix(discussion.user.photo)"></nz-avatar>
+    <nz-comment-content>
+      <p>
+        {{discussion.message}}
+      </p>
+      <img *ngIf="discussion.attachmentType && discussion.attachmentType=='image'" style="height: 110px"
+           [src]="api.imgFix(discussion.attachment)" [alt]="discussion.originalName">
+      <div (click)="discussion.showReply = !discussion.showReply" class="pointer">
+        <i nz-icon nzType="comment" nzTheme="outline" class="appColor m-r-5"></i>
+        <span class="appColor">Reply to</span>
+      </div>
+      <form *ngIf="discussion.showReply" class="w-75 m-t-5" [formGroup]="addReplyForm" (ngSubmit)="submitReply()">
+        <div nz-row class="h-100 justify-content-around bg-white">
+          <div class="h-100 p-l-10 bg-white p-2" nz-col nzSm="24" nzMd="16">
+          <textarea nz-input placeholder="Write a comment"
+                    class="shadow commentTextBox shadow transition" style="height: 92px"
+                    formControlName="comment" (click)="captureCommentID(discussion.id)"></textarea>
+          </div>
+          <input type="file" class="file-input" (change)="handleUploadReply($event, 'image', discussion.id)" formControlName="img" #imgUpload>
+          <input type="file" class="file-input" (change)="handleUploadReply($event, 'video', discussion.id)" formControlName="video" #videoUpload>
+          <input type="file" class="file-input" (change)="handleUploadReply($event, 'audio', discussion.id)" formControlName="audio" #audioUpload>
+          <input type="file" class="file-input" (change)="handleUploadReply($event, 'document', discussion.id)" formControlName="document" #docUpload>
+
+          <div class="align-items-center ant-col ant-col-md-8 ant-col-sm-24 d-flex flex-column justify-content-around p-2"
+               nz-col  nzSm="24" nzMd="8">
+            <div class="d-flex justify-content-center align-items-left p-2 uploadOptions">
+              <div class="d-flex flex-column">
+                <button nz-button type="button" (click)="imgUpload.click()"
+                        class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                  <i nz-icon nzType="picture" nzTheme="outline"></i>
+                  <span>Picture</span>
+                </button>
+              </div>
+              <div class="d-flex flex-column m-l-5">
+                <button nz-button type="button" (click)="videoUpload.click()"
+                        class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                  <i nz-icon nzType="file-pdf" nzTheme="outline"></i>
+                  <span>File</span>
+                </button>
+              </div>
+              <div class="d-flex flex-column m-l-5">
+                <button nz-button type="button" (click)="audioUpload.click()"
+                        class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                  <i nz-icon nzType="audio" nzTheme="outline"></i>
+                  <span>Audio</span>
+                </button>
+              </div>
+              <div class="d-flex flex-column m-l-5">
+                <button nz-button type="button" (click)="docUpload.click()"
+                        class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                  <i nz-icon nzType="video-camera" nzTheme="outline"></i>
+                  <span>Video</span>
+                </button>
+              </div>
+            </div>
+            <div class="d-flex justify-content-center align-items-left">
+              <nz-form-item nz-row class="register-area">
+                <nz-form-control>
+                  <label nz-checkbox>
+                    <span>Private</span>
+                  </label>
+                </nz-form-control>
+              </nz-form-item>
+              <button nz-button nzType="primary" class="ant-btn ant-btn-primary app-brown-btn w-100">Submit</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </nz-comment-content>
+    <ng-container *ngIf="discussion.replies && discussion.replies.length">
+        <nz-comment  *ngFor="let reply of discussion.replies" [nzAuthor]="reply.user.firstName+' '+reply.user.lastName"
+                     [nzDatetime]="reformatDate(reply.created)">
+          <nz-avatar nz-comment-avatar nzIcon="user" [nzSrc]="api.imgFix(reply.user.photo)"></nz-avatar>
+          <nz-comment-content>
+            <p>
+              {{reply.message}}
+            </p>
+            <img *ngIf="reply.attachmentType && reply.attachmentType=='image'" style="height: 110px"
+                 [src]="api.imgFix(reply.attachment)" [alt]="reply.originalName">
+          </nz-comment-content>
+          <nz-comment-action>
+          </nz-comment-action>
+        </nz-comment>
+    </ng-container>
+  </nz-comment>
+</ng-template>
+
+<nz-spin nzSimple [nzSize]="'large'" class="m-t-35 m-l-35" *ngIf="!discussions.length && !noDiscussions"></nz-spin>
+<nz-card class="shadow" *ngIf="noDiscussions || !discussions.length" style="width: 500px;">
+  <h3 nz-typography class="text-muted">No discussions found!</h3>
+</nz-card>
+<ng-container *ngFor="let discussion of discussions">
+  <ng-template [ngTemplateOutlet]="commentTemplateRef"  [ngTemplateOutletContext]="{ discussion: discussion }"> </ng-template>
+</ng-container>
+
+
+
+<div nz-row class="m-t-100 customDrawer transition" *ngIf="showNew"  [ngClass]="minimized ?? 'minimized'">
+  <div class="w-100 customAlert longText p-t-5 p-b-5 p-l-10 p-r-10" nz-col nzSpan="24">
+    <div class="d-flex justify-content-between">
+      <p class="font-weight-bold">Chat</p>
+      <div class="text-white font-size-20">
+        <i nz-icon nzType="expand-alt" nzTheme="outline" (click)="toggleRows()"></i>
+        <i nz-icon nzType="minus" nzTheme="outline" class="m-l-10" (click)="minimize()"></i>
+      </div>
+    </div>
+    <p class="font-size-14 m-0" style="text-align: left">
+      Post an announcement in {{api.getCurrentPath().name}}
+    </p>
+  </div>
+  <div class="w-100 h-100 transition h-100">
+    <form [formGroup]="addDiscussionForm" (ngSubmit)="submitAddActivityForm()">
+      <div nz-row class="h-100 justify-content-around bg-white">
+        <div class="h-100 p-l-10 bg-white p-2" nz-col nzSm="24" nzMd="16">
+          <textarea nz-input placeholder="Write a comment"
+                    class="shadow commentTextBox shadow transition"
+                    formControlName="comment"
+                    [ngStyle]="{'height': textBoxHeight}"></textarea>
+        </div>
+        <div class="align-items-center ant-col ant-col-md-8 ant-col-sm-24 d-flex flex-column justify-content-around p-2" nz-col  nzSm="24" nzMd="8">
+          <div class="d-flex justify-content-center align-items-center p-2 uploadOptions">
+            <div class="d-flex flex-column">
+              <i nz-icon nzType="picture" nzTheme="outline"></i>
+              <span>Picture</span>
+            </div>
+            <div class="d-flex flex-column m-l-5">
+              <i nz-icon nzType="file-pdf" nzTheme="outline"></i>
+              <span>File</span>
+            </div>
+            <div class="d-flex flex-column m-l-5">
+              <i nz-icon nzType="audio" nzTheme="outline"></i>
+              <span>Audio</span>
+            </div>
+            <div class="d-flex flex-column m-l-5">
+              <i nz-icon nzType="video-camera" nzTheme="outline"></i>
+              <span>Video</span>
+            </div>
+          </div>
+          <div class="d-flex justify-content-center align-items-center">
+            <button nz-button nzType="primary" class="ant-btn ant-btn-primary app-brown-btn w-100">Submit</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<br><br><br><br><br><br><br><br>

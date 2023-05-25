@@ -1,0 +1,22 @@
+.certain-search-item-count {
+  position: absolute;
+  color: #999;
+  right: 16px;
+}
+
+.more-link {
+  float: right;
+}
+
+
+
+/*
+  Dynamic Card CSS
+*/
+.userImg{
+  height: 130px;
+}
+
+.navyBlue{
+  color: #0e3660 !important;
+}

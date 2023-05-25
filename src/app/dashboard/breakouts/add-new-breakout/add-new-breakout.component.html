@@ -1,0 +1,166 @@
+<div class="d-flex w-100 justify-content-between align-items-baseline">
+  <p class="page-heading">Add New Breakout</p>
+  <button class="ant-btn ant-btn-dangerous app-black-button" (click)="backToBreakouts()">Back to Breakouts</button>
+</div>
+
+
+<form class="m-t-15" nz-form [nzLayout]="'vertical'" [formGroup]="validateForm" (ngSubmit)="submitForm()">
+  <div nz-row  [nzGutter]="24">
+    <div nz-col [nzSpan]="10">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzRequired>Break Out Name</nz-form-label>
+        <nz-form-control [nzSpan]="24" nzErrorTip="Please input break out name!">
+          <input nz-input formControlName="name" placeholder="Break out name" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzRequired>Description</nz-form-label>
+        <nz-form-control [nzSpan]="24" nzErrorTip="Please enter description!">
+          <textarea nz-input formControlName="desc" placeholder="Description" [nzAutosize]="{ minRows: 3, maxRows: 5 }"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" nzRequired>Event Location</nz-form-label>
+        <nz-form-control [nzSpan]="24" nzErrorTip="Please enter event location!">
+          <input nz-input formControlName="location" placeholder="Event Location" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="10">
+      <div class="d-flex flex-column align-items-center justify-content-center">
+        <img class="uploadImgIcon" src="../../../../assets/images/others/uploadImg.png" alt="">
+
+          <input type="file" class="m-t-15 ant-btn-primary app-brown-btn p-2" (change)="handleUpload($event)">
+      </div>
+    </div>
+
+    <div nz-col [nzSpan]="12">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="14" nzRequired>Start time (All times EST)</nz-form-label>
+        <nz-form-control [nzSpan]="20"  nzErrorTip="Please select start time!">
+          <nz-date-picker formControlName="startTime" class="w-100"
+              nzShowTime
+              nzFormat3="yyyy-MM-dd HH:mm:ss"
+              nzPlaceHolder="Select Time"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="12">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="14" nzRequired>End time (All times EST)</nz-form-label>
+        <nz-form-control [nzSpan]="20"  nzErrorTip="Please select end time!">
+          <nz-date-picker formControlName="endTime" class="w-100"
+              nzShowTime
+              nzFormat="yyyy-MM-dd HH:mm:ss"
+              nzPlaceHolder="Select Time"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>  <!-- ROW -->
+
+
+  <h3 nz-typography class="text-muted font-weight-normal">
+    All Breakouts are connected to a single Path to determine possible attendees.
+  </h3>
+
+  <div nz-row class="m-t-15">
+    <div nz-col nzSpan="24">
+      <h4 class="text-muted">Select a path related to this breakout:</h4>
+    </div>
+    <div nz-col nzSpan="10">
+     <div nz-row>
+       <div nz-col nzSpan="20" class="bg-white shadow pointer" (click)="showPathModal()">
+         <p class="font-size-18 m-0 p-l-15 p-t-5 p-b-5">{{ selectedPath }}</p>
+       </div>
+     </div>
+    </div>
+    <div nz-col nzSpan="5">
+      <button type="button" nz-button [nzType]="'primary'" (click)="showPathModal()" class="app-brown-btn">
+        <span>Select a path</span>
+      </button>
+      <nz-modal [(nzVisible)]="pathIsVisible"
+                nzTitle="Select a Path"
+                (nzOnCancel)="handlePathCancel()"
+                (nzOnOk)="handlePathOk()"
+                [nzContent]="pathModalContent">
+        <div *nzModalFooter>
+          <button nz-button nzType="primary" (click)="handlePathOk()" class="app-brown-btn">Done</button>
+        </div>
+      </nz-modal>
+      <ng-template  #pathModalContent>
+        <nz-radio-group formControlName="path">
+          <label nz-radio *ngFor="let path of paths" [nzValue]="path.id" class="w-100"
+                 (click)="fetchUsersFromPath(path)">
+            {{path.name}}
+          </label>
+        </nz-radio-group>
+      </ng-template>
+    </div>
+  </div>
+
+  <div nz-row class="m-t-15">
+    <div nz-col nzSpan="24">
+      <h4 class="text-muted">Select pathmates related to this breakout:</h4>
+    </div>
+    <div nz-col nzSpan="10">
+     <div nz-row>
+       <div nz-col nzSpan="20" class="bg-white shadow pointer" (click)="showPathMatesModal()">
+         <p class="font-size-18 m-0 p-l-15 p-t-5 p-b-5">{{ selectedPathMates }} Pathmates</p>
+       </div>
+     </div>
+    </div>
+    <div nz-col nzSpan="5">
+      <button type="button" nz-button [nzType]="'primary'" (click)="showPathMatesModal()" class="app-brown-btn">
+        <span>Add Attendees</span>
+      </button>
+      <nz-modal [(nzVisible)]="pathMateIsVisible"
+                nzTitle="Add Attendees"
+                (nzOnCancel)="handlePathMatesCancel()"
+                (nzOnOk)="handlePathMatesOk()"
+                [nzContent]="pathMatesModalContent">
+        <div *nzModalFooter>
+          <button nz-button nzType="primary" (click)="handlePathMatesOk()" class="app-brown-btn">Done</button>
+        </div>
+      </nz-modal>
+
+      <ng-template  #pathMatesModalContent>
+        <div *ngIf="selectedPath=='No Path Selected'">
+          <p>Please select a path first</p>
+        </div>
+        <div *ngIf="selectedPath!='No Path Selected'">
+          <nz-form-item>
+            <nz-form-control>
+              <div class="form-group">
+                <p >Select All</p>
+                <div *ngFor="let user of users">
+                  <label class="font-size-20">
+                    <input type="checkbox" [value]="user.id" (change)="onCheckChange($event)"/>
+                    {{user.firstName+' '+user.lastName}}
+                  </label>
+                </div>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <hr>
+
+  <nz-form-item class="m-t-25">
+    <nz-form-control [nzSpan]="14" [nzOffset]="isHorizontal ? 4 : null">
+      <div class="d-flex">
+        <nz-spin nzSimple [nzSize]="'large'" *ngIf="submitted"></nz-spin>
+        <button nz-button nzType="primary" class="app-brown-btn" *ngIf="!submitted">Create Breakout</button>
+        <button type="button" class="m-l-15 shadow app-black-button" nz-button nzType="white" (click)="backToBreakouts()">
+          <i nz-icon nzType="arrow-left" nzTheme="outline"></i>
+          Cancel
+        </button>
+      </div>
+    </nz-form-control>
+  </nz-form-item>
+
+</form>

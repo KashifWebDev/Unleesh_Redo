@@ -1,0 +1,54 @@
+@import url('./assets/lib/hljs/styles/atom-one-light.css');
+@import url('../node_modules/ng-zorro-antd/src/ng-zorro-antd.min.css');
+@import './assets/scss/app.scss';
+
+.page-heading {
+  margin-right: 12px;
+  margin-bottom: 0;
+  color: rgba(0,0,0,.85);
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 32px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.app-black-button, .app-black-button:active, .app-black-button:hover, .app-black-button:focus{
+  color: black;
+  border-color: black;
+}
+.app-brown-btn, .app-brown-btn:active, .app-brown-btn:hover, .app-brown-btn:focus{
+  background-color: #967a4d;
+  color: white;
+  border-color: #967a4d;
+}
+.ant-menu-item:active, .ant-menu-submenu-title:active {
+  color: black !important;
+  background: #f9e6e2 !important;
+}
+.appColor{
+  color: #967a4d;
+}
+.common-layout .page-container, .nav-wrap, body {
+  background-color: #f3f3f3 !important;
+}
+.common-layout .page-container .main-content {
+  padding: 0 25px 25px 25px;
+  min-height: calc(100vh - 65px);
+}
+.darkGreen{
+  color: #1e7b7e !important;
+}
+.uploadOptions div button, .uploadOptions div i, .uploadOptions div span{
+  font-size: 12px;
+}
+.uploadOptions div button:hover{
+  color: #967a4d;
+}
+.linkHover{
+  color: black;
+}
+.linkHover:hover{
+  color: #967a4d !important;
+}

@@ -1,0 +1,44 @@
+<div class="d-flex w-100 justify-content-between align-items-baseline m-b-20">
+  <a class="font-size-23 text-dark" routerLink="../">
+    <i nz-icon nzType="arrow-left" nzTheme="outline"></i>
+    Back to my paths
+  </a>
+</div>
+
+
+<div nz-row>
+  <div nz-col nzSm="20" nzMd="20" nzLg="20">
+    <nz-spin nzSimple [nzSize]="'large'" *ngIf="!pathDetail || !pathContent"></nz-spin>
+      <nz-card class="shadow"  *ngIf="pathDetail && pathContent">
+        <div class="d-flex">
+          <nz-avatar [nzSize]="70" nzIcon="" [nzSrc]="API.imgFix(pathDetail.icon)"></nz-avatar>
+          <div class="d-flex flex-column m-l-40">
+            <h3 nz-typography class="m-b-0">{{pathDetail.title}}</h3>
+            <span nz-typography class="text-muted">{{pathDetail.description}}</span>
+            <span nz-typography class="text-muted">Tokens {{pathDetail.totalPoints}} of {{pathDetail.overallPoints}}</span>
+            <nz-progress [nzPercent]="percentage(pathDetail.overallPoints, pathDetail.totalPoints)"
+                         [nzStrokeColor]="{ '0%': '#967a4d', '100%': '#967a4d' }"
+                         nzStatus="active" [nzShowInfo]="false">
+            </nz-progress>
+          </div>
+        </div>
+        <div nz-row class="m-t-20">
+          <div nz-col nzSpan="24">
+            <nz-collapse>
+              <nz-collapse-panel *ngFor="let panel of pathContent" [nzHeader]="panel.phaseName"  [ngStyle]="customStyle" class="bg-white border-0">
+                  <div class="d-flex justify-content-start align-items-center m-l-30 m-b-15" *ngFor="let item of panel.levels[0].actions; let i = index">
+                    <i nz-icon [nzType]="item.completed ? 'check' : 'right'" style="font-size: 12px" nzTheme="outline" class="text-primary font-weight-bold darkGreen"></i>
+                      <a [routerLink]="['../', 'path', id, panel.id, 'step', item.id]" class="text-dark">
+                        <div class="d-flex flex-column justify-content-start align-items-start m-l-10">
+                          <span class="font-size-17">{{item.title}}</span>
+<!--                          <span class="font-size-13 text-muted" [innerHTML]="item.description"></span>-->
+                        </div>
+                      </a>
+                  </div>
+              </nz-collapse-panel>
+            </nz-collapse>
+          </div>
+        </div>
+      </nz-card>
+  </div>
+</div>

@@ -1,0 +1,79 @@
+<div class="d-flex w-100 justify-content-between align-items-baseline m-b-10">
+  <p class="page-heading">Pathmails</p>
+  <a class=" app-black-button" (click)="gotoAllThreads()">Back to Pathmail</a>
+</div>
+
+
+<nz-spin nzSimple [nzSize]="'large'" *ngIf="loading"></nz-spin>
+
+<div class="d-flex flex-column">
+  <ng-container *ngFor="let thread of threads">
+   <div *ngIf="thread.message !== 'null'" class="d-flex m-b-5" [ngClass]="{'justify-content-end': checkSelfMsg(thread.author), 'justify-content-start': checkOtherMsg(thread.author)}">
+     <img [src]="api.imgFix(thread.author.photo)" class="m-r-10 senderPic" *ngIf="checkOtherMsg(thread.author)">
+     <div class="d-flex msgBox" [ngClass]="{'self': checkSelfMsg(thread.author), 'other': checkOtherMsg(thread.author)}">
+       <p *ngIf="checkOtherMsg(thread.author)" class="senderName">{{thread.author.firstName+' '+thread.author.lastName}}</p>
+       <p class="m-0" [innerHTML]="thread.message"></p>
+       <img [src]="api.imgFix(thread.attachment)" *ngIf="thread.attachmentType == 'image'" style="max-height: 110px;">
+       <p class="text-white font-size-12 m-0" style="align-self: flex-end">{{thread.created}}</p>
+     </div>
+   </div>
+  </ng-container>
+</div>
+
+
+
+
+<div nz-row class="m-t-100 customDrawer transition">
+  <div class="w-100 h-100 transition h-100">
+    <form [formGroup]="addActivityForm" (ngSubmit)="submitAddActivityForm()">
+      <div nz-row class="h-100 justify-content-around bg-white">
+        <div class="h-100 p-l-10 bg-white p-2" nz-col nzSm="24" nzMd="16">
+          <textarea nz-input placeholder="Write a comment"
+                    class="shadow commentTextBox shadow transition"
+                    formControlName="comment" ></textarea>
+        </div>
+
+        <input type="file" class="file-input" (change)="handleUpload($event, 'image')" formControlName="img" #imgUpload>
+        <input type="file" class="file-input" (change)="handleUpload($event, 'video')" formControlName="video" #videoUpload>
+        <input type="file" class="file-input" (change)="handleUpload($event, 'audio')" formControlName="audio" #audioUpload>
+        <input type="file" class="file-input" (change)="handleUpload($event, 'document')" formControlName="document" #docUpload>
+
+        <div class="align-items-left ant-col ant-col-md-8 ant-col-sm-24 d-flex flex-column justify-content-around p-2" nz-col  nzSm="24" nzMd="8">
+          <div class="d-flex justify-content-center align-items-center p-2 uploadOptions">
+            <div class="d-flex flex-column">
+              <button nz-button type="button" (click)="imgUpload.click()"
+                      class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                <i nz-icon nzType="picture" nzTheme="outline"></i>
+                <span>Picture</span>
+              </button>
+            </div>
+            <div class="d-flex flex-column m-l-5">
+              <button nz-button type="button" (click)="videoUpload.click()"
+                      class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                <i nz-icon nzType="file-pdf" nzTheme="outline"></i>
+                <span>File</span>
+              </button>
+            </div>
+            <div class="d-flex flex-column m-l-5">
+              <button nz-button type="button" (click)="audioUpload.click()"
+                      class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                <i nz-icon nzType="audio" nzTheme="outline"></i>
+                <span>Audio</span>
+              </button>
+            </div>
+            <div class="d-flex flex-column m-l-5">
+              <button nz-button type="button" (click)="docUpload.click()"
+                      class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                <i nz-icon nzType="video-camera" nzTheme="outline"></i>
+                <span>Video</span>
+              </button>
+            </div>
+          </div>
+          <div class="d-flex justify-content-center align-items-left">
+            <button nz-button nzType="primary" class="ant-btn ant-btn-primary app-brown-btn w-100">Submit</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

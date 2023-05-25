@@ -1,0 +1,151 @@
+[nz-form] {
+  max-width: 600px;
+}
+.disableBox{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: black;
+  opacity: 0.75;
+  color: white;
+  user-select: none;
+  pointer-events: none;
+  z-index: 999;
+}
+.file-input{
+  display: none !important;
+}
+
+
+.customAlert{
+  background-color: #1a7a7e;
+  padding: 10px 0 10px 10px;
+  height: fit-content;
+}
+.customAlert p{
+  color: white;
+}
+.customDrawer{
+  position: fixed;
+  width: 45%;
+  left: 27%;
+  box-shadow: 0px 0px 14px 6px #838383;
+  bottom: 0;
+}
+@media only screen and (max-width: 991px) and (min-width: 300px)  {
+  .customDrawer {
+    width: 83%;
+    left: 7%;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+.file-input {
+  display: none;
+}
+.transition{
+  transition: .2s all;
+}
+.ant-form-item {
+  margin: 0 !important;
+}
+
+@media only screen and (max-width: 991px) and (min-width: 300px)  {
+  .customDrawer {
+    width: 83%;
+    left: 7%;
+  }
+}
+@media only screen and (max-width: 2084px) and (min-width: 1276px)  {
+  .customDrawer{
+    left: 21%;
+  }
+}
+@media only screen and (max-width: 2084px) and (min-width: 1693px)  {
+  .minimized {
+    bottom: -115px;
+  }
+}
+@media only screen and (max-width: 1693px) and (min-width: 1275px) {
+  .minimized {
+    bottom: -119px
+  }
+}
+
+@media only screen and (max-width: 1275px) and (min-width: 1033px) {
+  .minimized {
+    bottom: -118px;
+  }
+}
+
+@media only screen and (max-width: 1033px) and (min-width: 993px) {
+  .minimized {
+    bottom: -118px;
+  }
+}
+
+@media only screen and (max-width: 933px) and (min-width: 819px) {
+  .minimized {
+    bottom: -121px;
+  }
+}
+@media only screen and (max-width: 819px) and (min-width: 809px) {
+  .minimized {
+    bottom: -166px;
+  }
+}
+@media only screen and (max-width: 809px) and (min-width: 771px) {
+  .minimized {
+    bottom: -116px;
+  }
+}
+
+@media only screen and (max-width: 771px) and (min-width: 611px) {
+  .minimized {
+    bottom: -191px
+  }
+}
+@media only screen and (max-width: 611px) and (min-width: 497px) {
+  .minimized {
+    bottom: -115px;
+  }
+}
+
+@media only screen and (max-width: 497px) and (min-width: 455px) {
+  .minimized {
+    bottom: -117px;
+  }
+}
+@media only screen and (max-width: 455px) and (min-width: 419px) {
+  .minimized {
+    bottom: -191px;
+  }
+}
+@media only screen and (max-width: 419px) and (min-width: 409px) {
+  .minimized {
+    bottom: -315px;
+  }
+}
+@media only screen and (max-width: 419px) and (min-width: 384px) {
+  .minimized {
+    bottom: -194px;
+  }
+}
+@media only screen and (max-width: 384px) and (min-width: 340px) {
+  .minimized {
+    bottom: -216px;
+  }
+}

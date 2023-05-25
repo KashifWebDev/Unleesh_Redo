@@ -1,0 +1,67 @@
+.side-nav{
+  top: 0;
+}
+.navLogo{
+  height: 20px;
+}
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+  background: #f9e7e2;
+}
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected a {
+  color: black;
+}
+.ant-menu-inline .ant-menu-item:after, .ant-menu-vertical .ant-menu-item:after, .ant-menu-vertical-left .ant-menu-item:after, .ant-menu-vertical-right .ant-menu-item:after {
+  border-right: 3px solid #f9a086;
+}
+.ant-menu-inline-collapsed > img.navUserPic{
+  margin-left: 75px !important;
+}
+.navUserPic{
+  height: 50px;
+  width: 50px;
+}
+.logo {
+  width: 200px;
+  border-right: 1px solid #edf2f9;
+  transition: all 0.2s ease;
+  -webkit-transition: all 0.2s ease;
+  -moz-transition: all 0.2s ease;
+  -o-transition: all 0.2s ease;
+  -ms-transition: all 0.2s ease;
+}
+.logo > a {
+  display: block;
+  text-align: center;
+}
+.leftMenuToggler{
+  display: none;
+}
+.desktopMenuToggler{
+  display: block;
+}
+.copyright{
+  margin: 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+@media screen and (min-width: 312px) and (max-width: 991px){
+  .leftMenuToggler{
+    display: block;
+  }
+  .desktopMenuToggler{
+    display: none;
+  }
+}
+
+@media screen and (min-width: 312px) and (max-width: 1440px){
+  .navLogo{
+    height: 16px;
+  }
+}
+
+.ant-menu-inline.ant-menu-root .ant-menu-item, .ant-menu-inline.ant-menu-root .ant-menu-submenu-title {
+  /*padding-left: 31px;*/
+}

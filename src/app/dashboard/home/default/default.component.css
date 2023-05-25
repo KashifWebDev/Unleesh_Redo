@@ -1,0 +1,21 @@
+.progressBar{
+  width: 400px;
+}
+nz-spin {
+  display: inline-block;
+  margin-right: 16px;
+}
+.ant-spin-dot-item {
+  background-color: red;
+}
+
+@media only screen and (max-width: 1278px) and (min-width: 992px) {
+  .progressBar{
+    width: 200px;
+  }
+}
+@media only screen and (max-width: 700px) and (min-width: 332px) {
+  .progressBar{
+    width: 100px;
+  }
+}

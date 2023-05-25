@@ -1,0 +1,117 @@
+<div class="d-flex w-100 justify-content-between align-items-baseline">
+  <p class="page-heading">My Paths</p>
+  <button *ngIf="!enterAccessCode" class="ant-btn ant-btn-dangerous app-black-button"
+          (click)="enterAccessCode = !enterAccessCode">Access Code</button>
+  <div *ngIf="enterAccessCode" class="d-flex">
+    <input nz-input placeholder="Access Code" [(ngModel)]="accessCode"/>
+    <button class="ant-btn ant-btn-dangerous app-black-button m-l-20"
+            (click)="showAccessCodeModal()">+ Add</button>
+  </div>
+</div>
+
+
+
+<h3 nz-typography class="text-muted">CURRENT PATH</h3>
+<!--<nz-spin nzSimple [nzSize]="'large'" *ngIf="!currentPath && !noPaths"></nz-spin>-->
+<nz-card class="shadow" *ngIf="noPaths || !currentPath" style="width: 500px;">
+  <h3 nz-typography class="text-muted">No paths linked to your account!</h3>
+</nz-card>
+<div nz-row *ngIf="currentPath">
+  <div nz-col nzSm="20" nzMd="20" nzLg="20">
+    <a [routerLink]="['../', 'view', currentPath.id]">
+      <nz-card class="shadow">
+        <div class="d-flex">
+          <nz-avatar [nzSize]="64" nzIcon="user" [nzSrc]="dashService.imgFix(currentPath.icon)"></nz-avatar>
+          <div class="d-flex flex-column p-l-40">
+            <h3 nz-typography class="m-b-0">{{currentPath.title}}</h3>
+            <span nz-typography class="text-muted">Tokens {{currentPath.totalPoints}} of {{currentPath.overallPoints}}</span>
+            <nz-progress [nzStrokeColor]="{ '0%': '#967a4d', '100%': '#967a4d' }"
+                         nzStatus="active"
+                         [nzShowInfo]="false"
+                         [nzPercent]="percentage(currentPath.overallPoints, currentPath.totalPoints)"
+                         class="progressBar">
+            </nz-progress>
+          </div>
+        </div>
+      </nz-card>
+    </a>
+  </div>
+</div>
+
+
+<h3 nz-typography class="text-muted">ALL PATHS</h3>
+<nz-spin nzSimple [nzSize]="'large'" *ngIf="allPathsLoader"></nz-spin>
+<div nz-row *ngIf="userPaths">
+  <div nz-col nzSm="20" nzMd="20" nzLg="20" *ngFor="let path of userPaths">
+    <a *ngIf="path.shown" (click)="showModal(path)">
+      <nz-card class="shadow">
+        <div class="d-flex">
+          <nz-avatar [nzSize]="64" nzIcon="user" [nzSrc]="dashService.imgFix(path.icon)"></nz-avatar>
+          <div class="d-flex flex-column p-l-40">
+            <h3 nz-typography class="m-b-0">{{path.name}}</h3>
+            <span nz-typography class="text-muted">Tokens {{path.totalPoints}} of {{path.overallPoints}}</span>
+            <nz-progress [nzStrokeColor]="{ '0%': '#967a4d', '100%': '#967a4d' }"
+                         nzStatus="active"
+                         [nzShowInfo]="false"
+                         [nzPercent]="percentage(path.overallPoints, path.totalPoints)"
+                          class="progressBar">
+            </nz-progress>
+          </div>
+        </div>
+      </nz-card>
+    </a>
+  </div>
+</div>
+
+<h3 nz-typography class="text-muted">COMPLETED PATHS</h3>
+<nz-spin nzSimple [nzSize]="'large'" *ngIf="!completedPath"></nz-spin>
+<div nz-row *ngIf="completedPath">
+  <div nz-col nzSm="20" nzMd="20" nzLg="20" *ngFor="let path of completedPath">
+    <a [routerLink]="['../', 'view', path.id]" *ngIf="path.shown">
+      <nz-card class="shadow">
+        <div class="d-flex">
+          <nz-avatar [nzSize]="70" nzIcon="" [nzSrc]="dashService.imgFix(path.icon)"></nz-avatar>
+          <div class="d-flex flex-column m-l-40 w-100">
+            <h3 nz-typography class="m-b-0">{{path.name}}</h3>
+            <span nz-typography class="text-muted">Tokens {{path.totalPoints}} of {{path.overallPoints}}</span>
+            <nz-progress [nzStrokeColor]="{ '0%': '#967a4d', '100%': '#967a4d' }"
+                         nzStatus="active"
+                         [nzShowInfo]="false"
+                         [nzPercent]="percentage(path.overallPoints, path.totalPoints)"
+                         class="progressBar">
+            </nz-progress>
+          </div>
+        </div>
+      </nz-card>
+    </a>
+  </div>
+</div>
+
+<nz-modal [(nzVisible)]="switchPathModal" nzTitle="Switch paths"
+          (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()"
+          [nzContent]="switchModalContent">
+</nz-modal>
+
+<ng-template #switchModalContent>
+  <p class="w-100 d-flex align-items-center justify-content-center">
+    <span nz-icon nzType="warning" nzTheme="outline" class="m-r-10 text-warning font-size-40"></span>
+    <span>Would you like to switch your path to <b>{{pathToSwitch.name}}</b>?</span>
+  </p>
+</ng-template>
+
+
+<nz-modal [(nzVisible)]="accessCodeErrModal"
+          (nzOnCancel)="AccessCodeModalCancel()" (nzOnOk)="AccessCodeModalOk()"
+          [nzContent]="AccessCodeErrorModal">
+</nz-modal>
+
+<ng-template #AccessCodeErrorModal>
+  <div class="d-flex flex-column align-items-center justify-content-center">
+    <span nz-icon nzType="close-circle" nzTheme="outline" class="m-r-10 text-danger font-size-60"></span>
+    <h3 class="m-t-10">Error</h3>
+    <p class="font-size-16">
+      No path with such access code
+    </p>
+  </div>
+
+</ng-template>

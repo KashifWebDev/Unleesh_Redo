@@ -1,0 +1,63 @@
+<div class="d-flex w-100 justify-content-between align-items-baseline">
+  <p class="page-heading">Breakouts</p>
+  <button class="ant-btn ant-btn-dangerous app-black-button" (click)="addNewBreakout()">New</button>
+</div>
+
+<div nz-row class="m-b-20 m-t-15">
+  <div class="w-100" nz-col nzSm="20" nzMd="12" nzLg="10">
+    <div class="example-input">
+      <nz-input-group nzSize="large" [nzSuffix]="suffixIcon">
+        <input placeholder="Search Breakouts...." nz-input [(ngModel)]="inputValue" (ngModelChange)="onChange($event)" />
+      </nz-input-group>
+      <ng-template #suffixIcon>
+        <i nz-icon nzType="search"></i>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+
+<h3 nz-typography class="text-muted text-uppercase">Current Events</h3>
+
+<div nz-row class="m-t-10">
+<!--  <nz-spin nzSimple [nzSize]="'large'" class="m-t-35 m-l-35" *ngIf="!breakouts.length"></nz-spin>-->
+  <div nz-col nzSm="24" nzMd="24" nzLg="20" *ngIf="breakouts">
+    <div class="w-100" *ngFor="let breakout of breakouts">
+      <nz-card [nzBordered]="true" class="shadow pointer" [routerLink]="['../', 'view', breakout.id]">
+        <div class="container">
+          <div nz-row [nzGutter]="100">
+            <div nz-col  nzSm="8" nzMd="5" nzLg="5">
+              <nz-avatar [nzSize]="90" nzIcon="user" [nzSrc]="breakoutImg(breakout)"></nz-avatar>
+            </div>
+            <div nz-col  nzSm="11" nzMd="8" nzLg="12" class="p-r-0">
+              <div class="d-flex flex-column justify-content-center">
+                <div class="d-flex flex-xs-column flex-sm-column flex-md-row justify-content-between align-items-start">
+                  <div>
+                    <h3 class="m-0 text-primary">{{breakout.title}}</h3>
+                    <a [routerLink]="['../../', 'paths', 'view', breakout.path.id]" class="linkHover">
+                      <p class="m-0">{{breakout.path.title}}</p>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div nz-col nzSm="5" nzMd="11" nzLg="7" class="p-l-0">
+              <div class="d-flex flex-column align-items-end justify-content-center h-100">
+                <p class="font-weight-semibold">{{breakout.startDate | date: 'MMM d h:mm a'}}</p>
+                <a class="m-0 linkHover" [routerLink]="['../../', 'users', breakout.host.id, 'portfolio']">
+                  <img style="height: 20px; width: 20px;" [src]="service.imgFix(breakout.host.photo)" alt="">
+                  {{breakout.host.firstName+' '+breakout.host.lastName}}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+  </div>
+</div>
+
+
+<br><br>
+<h3 nz-typography class="text-muted text-uppercase">Past Events</h3>
+

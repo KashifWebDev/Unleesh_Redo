@@ -1,0 +1,62 @@
+<div class="d-flex w-100 justify-content-between align-items-baseline m-b-10">
+  <p class="page-heading">Pathmails</p>
+  <button class="ant-btn ant-btn-dangerous app-black-button" (click)="addNewThread()">New</button>
+</div>
+
+<div nz-row class="m-b-20 m-t-15">
+  <div class="w-100" nz-col nzSm="20" nzMd="12" nzLg="10">
+    <div class="example-input">
+      <nz-input-group nzSize="large" [nzSuffix]="suffixIcon">
+        <input placeholder="Search Breakouts...." nz-input [(ngModel)]="inputValue" (ngModelChange)="onChange($event)" />
+      </nz-input-group>
+      <ng-template #suffixIcon>
+        <i nz-icon nzType="search"></i>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+
+<div nz-row class="m-t-10">
+  <nz-spin nzSimple [nzSize]="'large'" class="m-t-35 m-l-35" *ngIf="loadingThreads"></nz-spin>
+  <nz-card class="shadow" *ngIf="noThreads && threads.length==0 && !loadingThreads" style="width: 500px;">
+    <h3 nz-typography class="text-muted">No threads found!</h3>
+  </nz-card>
+
+
+  <div nz-col nzSm="24" nzMd="24" nzLg="20" *ngIf="threads">
+    <nz-card class="shadow pointer" *ngFor="let thread of threads">
+      <div class="d-flex w-100">
+        <div class="d-flex w-70" routerLink="../thread/{{thread.id}}">
+          <img [src]="service.imgFix(thread.messages[0].author.photo)" alt="" style="height: 75px; width: 75px">
+          <div class="d-flex flex-column m-l-20" routerLink="../thread/{{thread.id}}">
+            <h1 class="font-size-16 p-0 m-0">{{getAuthorName(thread.messages)}}</h1>
+            <p class="m-0 text-muted font-size-13">{{thread.paths[0].title}}</p>
+            <p class="m-0 text-dark" [innerHTML]="getLastMsg(thread.messages).message"></p>
+          </div>
+        </div>
+        <div class="d-flex flex-column w-30" style="cursor: default">
+          <p class="font-weight-bold m-0" style="text-align: right">{{reformatDate(getLastMsg(thread.messages).created)}}</p>
+          <p class="linkHover pointer" style="text-align: right" (click)="showModal(thread.participants)" *ngIf="thread.participants != null">
+            Sent to: {{countPeoples(thread)}} people
+          </p>
+          <p class="linkHover pointer" style="text-align: right" *ngIf="thread.participants == null">
+            Sent to: {{thread.paths[0].title}}
+          </p>
+        </div>
+      </div>
+    </nz-card>
+  </div>
+
+</div>
+
+
+<nz-modal [(nzVisible)]="isVisible" nzTitle="Thread participants" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()" [nzContent]="modelContent">
+
+</nz-modal>
+
+<ng-template #modelContent>
+  <p *ngFor="let participant of listOfParticipants" class="m-0">
+    {{participant.firstName+' '+participant.lastName}}
+  </p>
+</ng-template>

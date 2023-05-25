@@ -1,0 +1,23 @@
+<div nz-row>
+  <nz-spin nzSimple [nzSize]="'large'" *ngIf="!userProfileData"></nz-spin>
+  <div nz-col nzSm="24" nzMd="15" nzLg="15" *ngIf="userProfileData">
+    <nz-card>
+      <div class="d-flex">
+        <div>
+          <img
+               [src]="api.imgFix(userProfileData.photo)"
+               alt="Profile Picture" class="profileImg img-thumbnail">
+        </div>
+        <div>
+          <div class="d-flex flex-column m-l-40">
+            <h1>{{userProfileData.firstName+' '+userProfileData.lastName}}</h1>
+            <p class="font-size-18 darkGreen">Total Tokens: <span>{{userProfileData.totalPoints}}</span></p>
+          </div>
+        </div>
+      </div>
+    </nz-card>
+  </div>
+</div>
+
+
+<!--<h3 nz-typography class="text-muted">Recent Activity</h3>-->

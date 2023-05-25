@@ -1,0 +1,285 @@
+<div class="common-layout {{ 'is-' + selectedHeaderColor }}"
+    [ngClass]="{
+        'is-folded': isFolded,
+        'is-side-nav-dark' : isSideNavDark,
+        'is-expand' : isExpand
+    }"
+>
+<!--    <app-header></app-header>-->
+    <app-sidenav></app-sidenav>
+    <div class="page-container">
+        <div class="main-content">
+          <div class="m-b-10 smallScreen" nz-row>
+            <div class="w-100" nz-col nzXs="12" nzSm="12" nzMd="24" nzLg="0">
+              <div class="header" *ngIf="showMenuBtn" >
+                <div class="nav-wrap">
+                  <ul class="nav-left m-l-0">
+                    <li class="align-items-center d-flex justify-content-center mobile-toggle" style="margin-left: -20px">
+                        <a (click)="toggleExpand()">
+                            <i nz-icon [nzType]="isExpand? 'menu-fold': 'menu-unfold'" theme="outline"></i>
+                        </a>
+                    </li>
+                  </ul>
+                  <img class="m-t-25" src="assets/images/logo/logo.png" alt="" style="height: 20px">
+                  <ul class="nav-right">
+                    <li class="mobile-toggle">
+                        <a (click)="openTemplate()" class="m-r-20">
+                          <i nz-icon nzType="left" nzTheme="outline"></i>
+                        </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div nz-row>
+            <div class="w-100" nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="17">
+              <router-outlet></router-outlet>
+            </div>
+            <div class="w-100" nz-col nzXs="0" nzSm="0" nzMd="0" nzLg="7">
+              <input type="checkbox" id="toggle-right">
+              <div class="page-wrap">
+                <header>
+                  <div class="top-bar" (click)="toggleRightBar()">
+                    <label for="toggle-right" class="profile-toggle"><b>
+                      <i nz-icon [nzType]="rightBarIcon" nzTheme="outline" class="pointer"></i>
+                    </b></label>
+                  </div>
+                  <div class="middle-line"></div>
+                  <div class="bottom-bar"></div>
+                </header>
+
+                <nav class="profile shadow" id="style-4" [ngClass]="{'modalOpenedBg': modalOpen}">
+                  <div class="w-100 overflow-x-hidden">
+                    <h3 class="font-size-18 m-0 m-t-10 p-b-15 p-l-60 text-muted d-flex justify-content-between" style="border-bottom: 2px solid #c1c7cb;">
+                      <span>Current Path Activity</span>
+                      <span nz-icon nzType="reload" nzTheme="outline" class="m-r-5 m-t-5 pointer" style="font-weight: bolder" (click)="loadFeeds()" [nzSpin]="loadingActivities"></span>
+                    </h3>
+
+                    <ng-container *ngIf="loadingActivities">
+                      <nz-card class="shadow m-t-10">
+                        <p class="text-dark font-size-15 m-0">
+                          <span>Loading Activities for you...</span>
+                        </p>
+                      </nz-card>
+                    </ng-container>
+                    <ng-container *ngIf="!loadingActivities && !rightBarFeed.length">
+                      <nz-card class="shadow m-t-10 " [ngClass]="{'modalOpenedBg border-0': modalOpen}">
+                        <p class="text-dark font-size-15 m-0">
+                          <span>No Activities Found!</span>
+                        </p>
+                      </nz-card>
+                    </ng-container>
+
+                      <ng-container *ngFor="let feed of rightBarFeed" >
+                        <nz-card class="shadow"  (click)="getStepInfo(feed)" *ngIf="feed.activityType != 'ActionSubmitComment'"
+                                 [ngClass]="{'modalOpenedBg': modalOpen}">
+                        <div class="d-flex">
+                          <img *ngIf="feed && feed.activity && feed.activity.user && feed.activity.user.photo"
+                               [src]="dashboardService.imgFix(feed.activity.user.photo)" height="40px" width="40px" class="border-radius-10">
+                          <img *ngIf="feed.activityType == 'Event'" height="40px" width="40px" class="border-radius-10"
+                               [src]="dashboardService.imgFix(feed.activity.icon)">
+                          <div class="d-flex flex-column m-l-15">
+                            <div class="d-flex align-items-center">
+                              <a [routerLink]="['dashboard', 'users', feed.user.id, 'portfolio']" class="font-weight-semibold font-size-15 linkHover">{{feed.user.firstName+' '+feed.user.lastName}}</a>
+                              <p class="m-0 text-muted font-size-12 m-l-10">{{ reFormatDate(feed.activity.created) }}</p>
+                            </div>
+                            <p class="text-muted m-0 font-size-12">{{ feed.message }}</p>
+                          </div>
+                        </div>
+                        <p class="text-dark m-t-10">
+                          <span [innerHTML]="feed.activity.attachmentType=='image' ? feed.activity.message : feed.activity.comment"></span>
+                          <span [innerHTML]="feed.activity.attachment === null ? feed.activity.message : ''"></span>
+<!--                          {{feed.activity.attachmentType=='image' ? feed.activity.message : feed.activity.comment}}-->
+<!--                          {{feed.activity.attachment === null ? feed.activity.message : ''}}-->
+                        </p>
+                        <img *ngIf="feed.activity.attachmentType=='image'" style="height: 110px"
+                             [src]="dashboardService.imgFix(feed.activity.attachment)" class="m-b-10">
+                        <div class="d-flex justify-content-between">
+                          <div>
+                            <a (click)="feed.show = !feed.show" *ngIf="feed.activityType != 'ActionSubmitComment'">
+                              <i nz-icon nzType="comment" nzTheme="outline" class="appColor m-r-5"></i>
+                              <span class="appColor">{{ replyLinkText(feed) }}</span>
+                            </a>
+                          </div>
+                          <div>
+                            <a *ngIf="feed.activity.action" (click)="getPathDetailsFromStepID(feed.activity.action.id)"
+                               style="float: right;margin-right: 20px;" class="text-primary darkGreen">
+                              View Activity
+                            </a>
+                          </div>
+                        </div>
+                        <div>
+                          <!--                            <p (click)="feed.show = !feed.show">Reply</p>-->
+                          <div *ngIf="feed.show">
+                            <form class="w-100 m-t-5" [formGroup]="addReplyForm" (ngSubmit)="submitReply()">
+                              <div nz-row class="h-100 justify-content-around bg-white">
+                                <div class="h-100 p-l-10 bg-white p-2 w-100">
+                                  <textarea nz-input placeholder="Write a comment"
+                                            class="shadow commentTextBox shadow transition" style="height: 92px"
+                                            formControlName="comment" (click)="captureCommentID(feed.activity.id)"></textarea>
+                                </div>
+                                <div>
+                                  <input type="file" class="file-input" (change)="handleUploadReply($event, 'image', feed.activity.id)" formControlName="img" #imgUpload>
+                                  <input type="file" class="file-input" (change)="handleUploadReply($event, 'video', feed.activity.id)" formControlName="video" #videoUpload>
+                                  <input type="file" class="file-input" (change)="handleUploadReply($event, 'audio', feed.activity.id)" formControlName="audio" #audioUpload>
+                                  <input type="file" class="file-input" (change)="handleUploadReply($event, 'document', feed.activity.id)" formControlName="document" #docUpload>
+
+                                  <div class="w-100 d-flex align-items-center flex-column justify-content-around p-2">
+                                    <div class="d-flex justify-content-center align-items-center p-2 uploadOptions">
+                                      <div class="d-flex flex-column">
+                                        <button nz-button type="button" (click)="imgUpload.click()"
+                                                class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                                          <i nz-icon nzType="picture" nzTheme="outline"></i>
+                                          <span>Picture</span>
+                                        </button>
+                                      </div>
+                                      <div class="d-flex flex-column m-l-5">
+                                        <button nz-button type="button" (click)="videoUpload.click()"
+                                                class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                                          <i nz-icon nzType="file-pdf" nzTheme="outline"></i>
+                                          <span>File</span>
+                                        </button>
+                                      </div>
+                                      <div class="d-flex flex-column m-l-5">
+                                        <button nz-button type="button" (click)="audioUpload.click()"
+                                                class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                                          <i nz-icon nzType="audio" nzTheme="outline"></i>
+                                          <span>Audio</span>
+                                        </button>
+                                      </div>
+                                      <div class="d-flex flex-column m-l-5">
+                                        <button nz-button type="button" (click)="docUpload.click()"
+                                                class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                                          <i nz-icon nzType="video-camera" nzTheme="outline"></i>
+                                          <span>Video</span>
+                                        </button>
+                                      </div>
+                                      <button nz-button nzType="primary" class="ant-btn ant-btn-primary app-brown-btn w-100 m-l-5">Submit</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </form>
+                            <ng-container *ngIf="feed.activityType === 'ActionSubmit' && feed.activity.posts.length">
+                              <div class="replies m-l-20" *ngFor="let reply of feed.activity.posts">
+                                <div class="d-flex">
+                                  <img [src]="dashboardService.imgFix(reply.user.photo)" height="40px" width="40px" class="border-radius-10">
+                                  <div class="d-flex flex-column m-l-15">
+                                    <div class="d-flex align-items-center">
+                                      <a [routerLink]="['dashboard', 'users', reply.user.id, 'portfolio']" class="font-weight-semibold font-size-15 linkHover">{{reply.user.firstName+' '+reply.user.lastName}}</a>
+                                      <p class="m-0 text-muted font-size-12 m-l-10">{{ reFormatDate(reply.created) }}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                                <p class="text-dark m-t-10">
+                                  {{ reply.message }}
+                                </p>
+                                <img *ngIf="reply.attachmentType=='image'" style="height: 110px"
+                                     [src]="dashboardService.imgFix(reply.attachment)" class="m-b-10">
+                              </div>
+                            </ng-container>
+                          </div>
+
+                        </div>
+                        </nz-card>
+                      </ng-container>
+<!--
+<ng-container *ngFor="let feed of rightBarFeed">
+                      <nz-card class="shadow" *ngIf="feed.activityType == 'ActionSubmitComment' || feed.activityType == 'ActionSubmit'">
+                        <nz-comment [nzAuthor]="feed.user.firstName+' '+feed.user.lastName"
+                                    [nzDatetime]="reFormatDate(feed.activity.created)">
+                          <nz-avatar nz-comment-avatar nzIcon="user" [nzSrc]="feed.activity.icon"></nz-avatar>
+                          <nz-comment-content>
+                            <p>
+                              {{feed.activity.attachmentType=='image' ? feed.activity.message : feed.activity.comment}}
+                              {{feed.activity.attachment === null ? feed.activity.message : ''}}
+                            </p>
+                            <img *ngIf="feed.activity.attachmentType=='image'" style="height: 110px"
+                                 [src]="feed.activity.attachment">
+                          </nz-comment-content>
+                            <div class="d-flex justify-content-between">
+                              <a (click)="feed.show = !feed.show">
+                                <i nz-icon nzType="comment" nzTheme="outline" class="appColor m-r-5"></i>
+                                <span class="appColor">Reply to</span>
+                              </a>
+                                                     <a href="javascript:void(0)" style="float: right;margin-right: 20px;" class="text-primary darkGreen">View Activity</a>
+                  </div>
+                  <div>
+                    <form *ngIf="feed.show" class="w-100 m-t-5" [formGroup]="addReplyForm" (ngSubmit)="submitReply()">
+                      <div nz-row class="h-100 justify-content-around bg-white">
+                        <div class="h-100 p-l-10 bg-white p-2 w-100">
+                                  <textarea nz-input placeholder="Write a comment"
+                                            class="shadow commentTextBox shadow transition" style="height: 92px"
+                                            formControlName="comment" (click)="captureCommentID(feed.activity.id)"></textarea>
+                        </div>
+                        <div>
+                          <input type="file" class="file-input" (change)="handleUploadReply($event, 'image', feed.activity.id)" formControlName="img" #imgUpload>
+                          <input type="file" class="file-input" (change)="handleUploadReply($event, 'video', feed.activity.id)" formControlName="video" #videoUpload>
+                          <input type="file" class="file-input" (change)="handleUploadReply($event, 'audio', feed.activity.id)" formControlName="audio" #audioUpload>
+                          <input type="file" class="file-input" (change)="handleUploadReply($event, 'document', feed.activity.id)" formControlName="document" #docUpload>
+
+                          <div class="w-100 d-flex align-items-center flex-column justify-content-around p-2">
+                            <div class="d-flex justify-content-center align-items-center p-2 uploadOptions" style="margin-left: -44px;">
+                              <div class="d-flex flex-column">
+                                <button nz-button type="button" (click)="imgUpload.click()"
+                                        class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                                  <i nz-icon nzType="picture" nzTheme="outline"></i>
+                                  <span>Picture</span>
+                                </button>
+                              </div>
+                              <div class="d-flex flex-column m-l-5">
+                                <button nz-button type="button" (click)="videoUpload.click()"
+                                        class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                                  <i nz-icon nzType="file-pdf" nzTheme="outline"></i>
+                                  <span>File</span>
+                                </button>
+                              </div>
+                              <div class="d-flex flex-column m-l-5">
+                                <button nz-button type="button" (click)="audioUpload.click()"
+                                        class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                                  <i nz-icon nzType="audio" nzTheme="outline"></i>
+                                  <span>Audio</span>
+                                </button>
+                              </div>
+                              <div class="d-flex flex-column m-l-5">
+                                <button nz-button type="button" (click)="docUpload.click()"
+                                        class="border-0 bg-transparent d-flex flex-column align-items-center p-0">
+                                  <i nz-icon nzType="video-camera" nzTheme="outline"></i>
+                                  <span>Video</span>
+                                </button>
+                              </div>
+                              <button nz-button nzType="primary" class="ant-btn ant-btn-primary app-brown-btn w-100 m-l-5">Submit</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  </nz-comment>
+                  </nz-card>
+                  </ng-container>
+-->
+                  </div>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+<!--        <app-footer></app-footer>-->
+    </div>
+</div>
+
+<ng-template #drawerTemplate let-data let-drawerRef="drawerRef">
+  <nz-card class="shadow" *ngFor="let count of counter(4)">
+    <nz-comment nzAuthor="Julia CHativonier" [nzDatetime]="time">
+      <nz-avatar nz-comment-avatar nzIcon="user" nzSrc="assets/images/avatars/thumb-3.jpg"></nz-avatar>
+      <nz-comment-content>
+        <p>
+          Created Discussion on innovation on Oct 13, 12:00 PM.
+        </p>
+      </nz-comment-content>
+      <a href="" class="text-primary" style="float: right;margin-right: 20px;">View Activity</a>
+    </nz-comment>
+  </nz-card>
+</ng-template>

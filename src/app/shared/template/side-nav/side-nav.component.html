@@ -1,0 +1,164 @@
+<perfect-scrollbar class="side-nav" sideNav>
+  <div *ngIf="hideSideNav" class="d-flex justify-content-center m-t-10">
+    <i nz-icon nzType="bars"
+       nzTheme="outline"
+       (click)="toggleExpand()"
+       class="font-size-20 font-weigh-bold pointer">
+    </i>
+  </div>
+  <div *ngIf="!hideSideNav" class="align-items-center d-flex justify-content-between logo-dark">
+    <a routerLink="/dashboard">
+      <img src="assets/images/logo/logo.png" alt="Logo"
+           class="m-l-10 m-t-10 navLogo">
+    </a>
+    <a class="font-size-20 m-r-10 text-muted leftMenuToggler" (click)="closeMobileMenu()">
+      <i nz-icon nzType="close" theme="outline"></i>
+    </a>
+    <a class="font-size-20 m-r-10 text-muted desktopMenuToggler" (click)="toggleFold()">
+      <i nz-icon nzType="close" theme="outline" class="appColor"></i>
+    </a>
+  </div>
+    <ul *ngIf="!hideSideNav" class="ant-menu ant-menu-root ant-menu-inline side-nav-menu"
+        [ngClass]="{
+            'ant-menu-inline-collapsed': isFolded,
+            'ant-menu-dark' : isSideNavDark
+        }"
+    >
+      <li class="ant-menu-submenu-inline m-t-25"
+          routerLinkActive="ant-menu-item-selected"
+          [routerLinkActiveOptions]="{exact: true}">
+        <a href="javascript:void(0);" class="ant-menu-submenu-title p-t-10 p-b-10 h-70"  routerLink="/dashboard/profile" (click)="closeMenu()">
+          <div class="d-flex justify-content-center align-items-center userProfileCustom">
+            <img [src]="service.imgFix(userData.photo)" alt="Profile Pic" class="navUserPic">
+            <div class="d-flex flex-column m-l-15">
+              <span style="line-height: normal" class="font-weight-bold">{{this.userData.firstName +' '+ this.userData.lastName}}</span>
+              <p class="m-0" style="line-height: normal">{{this.userData.totalPoints ? this.userData.totalPoints : 0}} tokens</p>
+            </div>
+          </div>
+        </a>
+      </li>
+
+      <li class="ant-menu-item"
+          routerLinkActive="ant-menu-item-selected"
+          [routerLinkActiveOptions]="{exact: false}">
+        <a href="javascript:void(0);" class="ant-menu-title" routerLink="/dashboard/paths" (click)="closeMenu()">
+          <span>My Paths</span>
+        </a>
+      </li>
+      <li class="ant-menu-item" *ngIf="currentPathDetails">
+        <a href="javascript:void(0);" class="ant-menu-title w-100" style="white-space: break-spaces;line-height: normal;"
+           (click)="closeMenu()" routerLink="dashboard/paths/view/{{currentPathDetails.id}}">
+          <span class="font-size-13 text-muted">{{currentPathDetails.name}}</span>
+        </a>
+      </li>
+      <li class="ant-menu-item" *ngIf="!currentPathDetails">
+        <a href="javascript:void(0);" class="ant-menu-title w-100" style="white-space: break-spaces;line-height: normal;"
+           (click)="closeMenu()" routerLink="dashboard/paths/default">
+          <span class="font-size-13 text-muted">My Paths</span>
+        </a>
+      </li>
+      <li class="ant-menu-item"
+          routerLinkActive="ant-menu-item-selected"
+          [routerLinkActiveOptions]="{exact: false}">
+        <a href="javascript:void(0);" class="ant-menu-title p-l-40" routerLink="dashboard/pathmates" (click)="closeMenu()">
+          <span>Pathmates</span>
+        </a>
+      </li>
+      <li class="ant-menu-item"
+          routerLinkActive="ant-menu-item-selected"
+          [routerLinkActiveOptions]="{exact: false}">
+        <a href="javascript:void(0);" class="ant-menu-title p-l-40" routerLink="/dashboard/breakouts" (click)="closeMenu()">
+          <span>Breakouts</span>
+        </a>
+      </li>
+      <li class="ant-menu-item"
+          routerLinkActive="ant-menu-item-selected"
+          [routerLinkActiveOptions]="{exact: false}">
+        <a href="javascript:void(0);" class="ant-menu-title p-l-40" routerLink="/dashboard/pathmails" (click)="closeMenu()">
+          <span>Pathmail</span>
+        </a>
+      </li>
+      <li class="ant-menu-item"
+          routerLinkActive="ant-menu-item-selected"
+          [routerLinkActiveOptions]="{exact: false}">
+        <a href="javascript:void(0);" class="ant-menu-title p-l-40" routerLink="/dashboard/announcements" (click)="closeMenu()">
+          <span>Chats</span>
+        </a>
+      </li>
+
+
+        <li [ngClass]="item.submenu.length > 0?'ant-menu-submenu ant-menu-submenu-inline':'ant-menu-item'"
+            *ngFor="let item of menuItems"
+            [routerLinkActive]="item.submenu.length > 0 ? 'ant-menu-submenu-open' : 'ant-menu-item-selected'"
+            [routerLinkActiveOptions]="{exact: false}">
+            <a href="javascript:void(0);" class="ant-menu-submenu-title" *ngIf="item.submenu.length > 0">
+                <i *ngIf="item.iconType == 'nzIcon'" nz-icon [nzType]="item.icon" [theme]="item.iconTheme"></i>
+                <i *ngIf="item.iconType == 'fontawesome'" class="m-r-10" [ngClass]="[item.iconTheme , item.icon]"></i>
+                <span>{{item.title}}</span>
+                <i class="ant-menu-submenu-arrow"></i>
+            </a>
+            <a [routerLink]="item.path" (click)="closeMobileMenu()" *ngIf="item.submenu.length === 0">
+                <i *ngIf="item.iconType == 'nzIcon'" nz-icon [nzType]="item.icon" [theme]="item.iconTheme"></i>
+                <i *ngIf="item.iconType == 'fontawesome'" class="m-r-10" [ngClass]="[item.iconTheme , item.icon]"></i>
+                <span>{{item.title}}</span>
+            </a>
+
+            <!-- Second Level -->
+            <ul class="ant-menu ant-menu-inline ant-menu-sub dropdown-menu" *ngIf="item.submenu.length > 0">
+                <li [ngClass]="subItem.submenu.length > 0?'ant-menu-submenu ant-menu-submenu-inline':'ant-menu-item'"
+                    *ngFor="let subItem of item.submenu"
+                    [routerLinkActive]="subItem.submenu.length > 0 ? 'ant-menu-submenu-open' : 'ant-menu-item-selected'"
+                    [routerLinkActiveOptions]="{exact: false}">
+                    <a href="javascript:void(0);" class="ant-menu-submenu-title p-l-50" *ngIf="subItem.submenu.length > 0">
+                        <i *ngIf="subItem.iconType == 'nzIcon'" nz-icon [nzType]="subItem.icon" [theme]="subItem.iconTheme"></i>
+                        <i *ngIf="subItem.iconType == 'fontawesome'" class="m-r-10" [ngClass]="[subItem.iconTheme , subItem.icon]"></i>
+                        <span>{{subItem.title}}</span>
+                        <i class="ant-menu-submenu-arrow"></i>
+                    </a>
+                    <a [routerLink]="subItem.path" (click)="closeMobileMenu()" class="p-l-30" *ngIf="subItem.submenu.length === 0">
+                        <i *ngIf="subItem.iconType == 'nzIcon'" nz-icon [nzType]="subItem.icon" [theme]="subItem.iconTheme"></i>
+                        <i *ngIf="subItem.iconType == 'fontawesome'" class="m-r-10" [ngClass]="[subItem.iconTheme , subItem.icon]"></i>
+                        <span>{{subItem.title}}</span>
+                    </a>
+
+                    <!-- Third Level -->
+                    <ul class="ant-menu ant-menu-inline ant-menu-sub dropdown-menu" *ngIf="subItem.submenu.length > 0">
+                        <li [ngClass]="subItem.submenu.length > 0?'ant-menu-submenu ant-menu-submenu-inline':'ant-menu-item'"
+                            *ngFor="let subItem of subItem.submenu" routerLinkActive="ant-menu-item-selected"
+                            [routerLinkActiveOptions]="{exact: false}">
+                            <a href="javascript:void(0);" class="ant-menu-submenu-title p-l-50" *ngIf="subItem.submenu.length > 0">
+                                <i *ngIf="subItem.iconType == 'nzIcon'" nz-icon [nzType]="subItem.icon" [theme]="subItem.iconTheme"></i>
+                                <i *ngIf="subItem.iconType == 'fontawesome'" class="m-r-10" [ngClass]="[subItem.iconTheme , subItem.icon]"></i>
+                                <span>{{subItem.title}}</span>
+                                <i class="ant-menu-submenu-arrow"></i>
+                            </a>
+                            <a [routerLink]="subItem.path" (click)="closeMobileMenu()" class="p-l-50" *ngIf="subItem.submenu.length === 0">
+                                <i *ngIf="subItem.iconType == 'nzIcon'" nz-icon [nzType]="subItem.icon" [theme]="subItem.iconTheme"></i>
+                                <i *ngIf="subItem.iconType == 'fontawesome'" class="m-r-10" [ngClass]="[subItem.iconTheme , subItem.icon]"></i>
+                                <span>{{subItem.title}}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+
+        <li class="ant-menu-item"  style="position: absolute;bottom: 148px;"
+            routerLinkActive="ant-menu-item-selected"
+            [routerLinkActiveOptions]="{exact: true}">
+          <a class="ant-menu-title" (click)="logout()">
+            <i nz-icon nzType="user-switch" nzTheme="outline"></i>
+            <span>Admin Login</span>
+          </a>
+        </li>
+        <li class="ant-menu-item"  style="position: absolute;bottom: 113px;"
+            routerLinkActive="ant-menu-item-selected"
+            [routerLinkActiveOptions]="{exact: true}">
+          <a class="ant-menu-title" (click)="logout()">
+            <i nz-icon nzType="logout" theme="outline"></i>
+            <span>Sign Out</span>
+          </a>
+        </li>
+    </ul>
+  <p *ngIf="!hideSideNav" class="m-b-0 copyright">Copyright © 2022 Unleesh.<br> All rights reserved.</p>
+</perfect-scrollbar>

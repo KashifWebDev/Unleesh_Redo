@@ -1,0 +1,93 @@
+<div nz-row>
+  <div nz-col nzSm="24" nzMd="24" nzLg="24">
+    <nz-card>
+      <div class="d-flex">
+        <div>
+          <img [src]="service.imgFix(userData.photo)"
+               alt="Use Profile Photo" class="profileImg img-thumbnail">
+        </div>
+        <div>
+          <div class="d-flex flex-column m-l-40">
+            <h1>{{userData.firstName +' '+ userData.lastName}}</h1>
+            <p class="font-size-18 darkGreen">Total Tokens: <span>{{this.userData.totalPoints ? this.userData.totalPoints : 0}}</span></p>
+            <button nz-button nzType="primary" nzSize="20" class="app-brown-btn editButton" (click)="editProfileButton()">
+              {{editButtonText}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </nz-card>
+  </div>
+</div>
+
+
+<ng-container *ngIf="editMode">
+  <h3 nz-typography class="text-muted">Edit Profile</h3>
+  <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+    <div nz-row [nzGutter]="15">
+      <div nz-col nzXs="12" nzSm="12" nzMd="12" nzLg="12">
+        <nz-form-item>
+          <nz-form-label nzSpan="24" nzRequired nzFor="firstName">First Name</nz-form-label>
+          <nz-form-control nzSpan="24" nzErrorTip="First Name">
+            <input nz-input formControlName="firstName" id="firstName" />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label nzSpan="24" nzRequired nzFor="lastName">Last Name</nz-form-label>
+          <nz-form-control nzSpan="24" nzErrorTip="Last Name">
+            <input nz-input formControlName="lastName" id="lastName" />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label nzSpan="24" nzFor="company">Company</nz-form-label>
+          <nz-form-control nzSpan="24" nzErrorTip="Company">
+            <input nz-input formControlName="company" id="company" />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label nzSpan="24" nzFor="profession">Profession</nz-form-label>
+          <nz-form-control nzSpan="24" nzErrorTip="Profession">
+            <input nz-input formControlName="profession" id="profession" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzXs="12" nzSm="12" nzMd="12" nzLg="12">
+        <nz-form-item>
+          <nz-form-label nzSpan="24" nzFor="education">Education</nz-form-label>
+          <nz-form-control nzSpan="24" nzErrorTip="Education">
+            <input nz-input formControlName="education" id="education" />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label nzSpan="24" nzRequired nzFor="email">Email</nz-form-label>
+          <nz-form-control nzSpan="24" nzErrorTip="Email">
+            <input nz-input formControlName="email" id="email" />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label nzSpan="24" nzFor="zipCode">ZipCode</nz-form-label>
+          <nz-form-control nzSpan="24" nzErrorTip="ZipCode">
+            <input nz-input formControlName="zipCode" id="zipCode" />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label nzSpan="24" nzFor="picture">Picture</nz-form-label>
+          <nz-form-control nzSpan="24" nzErrorTip="Picture">
+            <input nz-input type="file" (change)="handleUpload($event)" id="picture" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="d-flex justify-content-center">
+      <nz-form-item>
+        <nz-form-control>
+          <button nz-button nzType="primary" class="app-brown-btn">Submit Changes</button>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </form>
+</ng-container>
+
+<ng-container *ngIf="!editMode">
+  <h3 nz-typography class="text-muted">My Recent Activity</h3>
+</ng-container>
